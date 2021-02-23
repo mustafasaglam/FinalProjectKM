@@ -25,7 +25,7 @@ namespace DataAccess.Concrete.InMemory
             new Product{ProductId=4,CategoryId=2,ProductName="Klavye",UnitInStock=65,UnitPrice=150},
             new Product{ProductId=5,CategoryId=2,ProductName="Mouse",UnitInStock=1,UnitPrice=85}
             };
-        }
+        } 
 
         public void Add(Product product)
         {

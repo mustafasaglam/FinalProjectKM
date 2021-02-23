@@ -1,0 +1,47 @@
+--****--
+Katmanlarımızı oluşturmaya BlankSolution yani projemiz üzerine sağ tıklayarak Add-> new project diyerek başlıyoruz.
+--.NET önceden açık kaynaklı değildi. açık kaynak verisiyonda getirilerek aslında  2 tür oldu. .NET ve .NET Core
+
+--Biz burada ilk Class Library projemizi oluştururken .NET Standart olanı seçiyoruz ve Sınıflarımızı tutacak sınıf kütüphanemizi oluşturuyoruz. .NET standart hem eski versiyonu hemde .NET core u içinde barındırmaktadır, uyumludur.
+
+--**DataAccess Veri Erişim katmanımızı oluşturmuş olduk.
+
+--**Business Katmanımızıda yine Class Library olarak ekliyoruz.
+
+--**Şimdi bize yardımcı bir katman lazım. Yani veritabanı nesnelerimizi tutacak Varlık katmanımız olan Entities katmanını oluşturuyoruz.
+
+--Şimdi birde Test projesi olacak olan (Sonradan APıye geçecek) ConsolUI adında bir Console App (.NET Core) projesi açalım. Console uygulamasında .NET Core veya .NET Framework önemli değil
+
+***---- ŞimdiConsole UI hariç diğer eklediğimiz tüm projelere 2 Adet Klasör ekleyeceğiz. **Eklerken PascalCase uyalım kelimelerin ilk harfi büyük. Artık Projelerimizde bu güne kadar öğrendiğimiz işlemleri düzenli bir şekilde gruplamayı organize ediyoruz.
+
+1-Abstract   **: Abstract tan kastımız soyut nesnelerdir.Interface,BaseClass,Abstract Classlar  burada tutulacaktır. Yani Abstract içinde referans tuttucular olacaktır. Yani bu Abstract ile uygulamalar arasındaki bağımlılıkları minimize edeceğiz.
+
+2-Concrete  **: Concrete Somut demektir. Yani gerçek işi yapan classalr burada olacaktır.
+
+**-- Şimdi Entities katmanımızdan başlayarak Entitylerimizi oluşturalım. Önek northwind i alıyoruz.
+--Entities içindeki Concrete klasörüne sağ tıklayıp ekle diyerek bir class ekliyoruz. Product ismindeki clasımızın erişim belirtecini public yapıyoruz. Yani bu classa diğer katmanlarda erişebilsin diyoruz. Çünkü DataAcces ürünü ekleyecek, Business ürünü kontrol edecek, ConsolUI ürünü gösterecek. Ve bu erişimlerin sağlanması için public olması gerekmektedir.
+
+Devamı açıklamalar artık proje içinde ki classlar içinde :)
+
+--Entities içeris oluştuurlduktan sonra DataAcces katmanımıza gidip veriye erişim işlemlerimizi kodluyoruz. Burada veriye erişim için bir çok yöntem kullanılabilir. 
+
+--DataAcces layer dada Abstract ve Concrete diye iki klasörümüz vardı.
+--Bunun standardı Hr nesnenin Interface ini oluşturmakdır. Abstract için  IProductDal ismi ile bir Interface oluşturulur. I interface den gelir, Prodct hangi tabloya karşılık geldiğini, Dal ise hangi katmana karşılık geldiğini anlatır.***
+
+--** Şimdi IPoductDal da metodlarımızı yazdıktan sonra Bunun Comut kısmını Yani Concrete kısmını yazıyoruz.
+--Burata Farklı yöntemler vardır. Mesela Adonet, EntityFramework, Nhibernate gibi alternatif ORM ler vardır. Dolayısıyla burda alternatif teknolojiler var ise Concrete içinde klasörleme yapacağız.
+
+--Şimdi DB ile çalışmayıp tamamen hafızadan çalışacağımız için InMemory (bellek) diye bir klasör ve Enrirtyframework diye bir kalsör açalım
+-Vuradaki isimlendirme tipi TeknolojiAdı- Class Adı - Ve proje Adı : InMemoryProductDal şeklinde olmaktadır. Yarın öbürgün entity framework e geince bu isimlendirme EFProductDal olur :)
+
+--** Buraki işlemde bitince Business Katmanımıza geçiyoruz.
+--**Business işlemleri bitrince de
+--** ConsoleUI ile test edebiliriz.
+Açıklamalar yine proje içindede mevcut oraları da okumalıyız :)
+
+
+
+
+
+
+

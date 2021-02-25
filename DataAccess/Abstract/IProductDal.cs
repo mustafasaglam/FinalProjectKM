@@ -1,5 +1,6 @@
 ﻿using Core.DataAccess;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,9 +9,10 @@ namespace DataAccess.Abstract
 {
     //yine interface erişim belirtecimizi public yaparız
     //Burada önceki derslerimizde de işlediğimiz gibi metodlarımızı tutacağız***
-    public interface IProductDal : IEntityRepository<Product> //Artık IProductDal asen bir IEntityRepository sin dedik ve ona T tipindeki ilgili nesnesini veridk***
+    public interface IProductDal : IEntityRepository<Product> //Artık IProductDal a sen bir IEntityRepository sin dedik ve ona T tipindeki ilgili nesnesini veridk***
     {
 
+        List<ProductDetailDto> GetProductDetails(); // DTO objelerimize ait metod
 
         //--İlk öğrenim notları oku :) **---
         //Product Tablomuzu görmemiz için Entities i DataAccess layer a referans olarak eklememiz lazım. Projeye Sağ tık >Add>Project Reference

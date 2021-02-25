@@ -13,13 +13,25 @@ namespace ConsoleUI
 
             //Şimdi yukarıdaki ProductManager ile InMemoryProductDal ile çalışacağımızı söylüyoruz. Ve Alttakinde de EFProductDal ile çalışacağımzıı söylüyoruz yani Teknoloji altyapı değişimi yapmış oluyor.
 
+           // ProductManagerTestMethod();
+
+            Console.WriteLine("-----------------------------------------------");
+            CategoryManager categoryManager = new CategoryManager(new EfCategoryDal());
+            foreach (var item in categoryManager.GetAll())
+            {
+                Console.WriteLine(item.CategoryName);
+            }
+
+        }
+
+        private static void ProductManagerTestMethod()
+        {
             ProductManager productManager = new ProductManager(new EFProductDal()); //Bu şekildede Artık Entity Framework altyapısını kullnacağımızı belirriyoruz!!!***
 
-            foreach (var item in productManager.GetByUnitPrice(50,100)) //Bize bellekteki listeden gelen isimleri ekrana yaz. Zamanla değişti..**
+            foreach (var item in productManager.GetByUnitPrice(50, 100)) //Bize bellekteki listeden gelen isimleri ekrana yaz. Zamanla değişti..**
             {
                 Console.WriteLine(item.ProductName);
             }
-            
         }
     }
 }

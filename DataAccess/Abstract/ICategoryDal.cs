@@ -1,10 +1,12 @@
-﻿using Entities.Concrete;
+﻿using Core.DataAccess;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DataAccess.Abstract
 {
+    //Code Refactoring : Kod iyileştirme**
 
     public interface ICategoryDal:IEntityRepository<Category> // Artık ICategoryDal a sen bir IEntityRepository sin dedik ve ona T tipindeki ilgili nesnesini verdik**
     {

@@ -6,9 +6,7 @@ using System.Text;
 
 namespace DataAccess.Abstract
 {
-    //Public yaptık
-    public interface ICustomerDal:IEntityRepository<Customer> //Buraya geldik ve IentityRepository sin v eCustomer ile çalıaşcaksın dedik.
+    public interface IOrderDal:IEntityRepository<Order>
     {
-
     }
 }

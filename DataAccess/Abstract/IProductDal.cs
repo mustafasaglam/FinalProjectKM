@@ -1,4 +1,4 @@
-﻿using Entities.Abstract;
+﻿using Core.DataAccess;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace DataAccess.Abstract
 {
     //yine interface erişim belirtecimizi public yaparız
     //Burada önceki derslerimizde de işlediğimiz gibi metodlarımızı tutacağız***
-    public interface IProductDal:IEntityRepository<Product> //Artık IProductDal asen bir IEntityRepository sin dedik ve ona T tipindeki ilgili nesnesini veridk***
+    public interface IProductDal : IEntityRepository<Product> //Artık IProductDal asen bir IEntityRepository sin dedik ve ona T tipindeki ilgili nesnesini veridk***
     {
 
 
@@ -31,5 +31,7 @@ namespace DataAccess.Abstract
 
         //Yeni bir metod ekleyelim
         ////List<Product> GetByGategory(int categoryId);
+        ///
+        //Burası Core Altında entityframework aldındaki EfEntitRepository e tşaındı***en son işlem
     }
 }

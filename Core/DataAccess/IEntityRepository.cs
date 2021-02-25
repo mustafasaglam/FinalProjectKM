@@ -1,10 +1,9 @@
-﻿using Entities.Abstract;
+﻿using Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
-namespace DataAccess.Abstract
+namespace Core.DataAccess
 {
     //Bu bizim her Nesnemizin Generic Repository TasatımDesenini tutacak Temel Interface i
     //Ve biz bu T generic tipini biz sınırlandırmamız lazım. Yani biz buna sadece veritabanı nesnelerini kullanacağımızı belirtiyoruz. Peki bizim veritabanı listelerimiz nedir class. Şimdi ona göre where T:class tır diyelim.
@@ -18,7 +17,7 @@ namespace DataAccess.Abstract
 
         T Get(Expression<Func<T,bool>>filter); //Bu metodda filtre zorunlu diyoruz.eğer filtre vermemişse tüm datayı istiyor da diyebilirz
 
-        void Add(T entity); //Product ekleme metodumuz, parametre olarak Product alıyor
+        void Add(T entity); //Product ekleme metodumuz, parametre olarak T tipinde bir entity alıyor
 
         void Update(T entity); // Güncelleme işlemi için
 

@@ -1,6 +1,7 @@
 ﻿using Business.Concrete;
 using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemory;
+using Entities.Concrete;
 using System;
 
 namespace ConsoleUI
@@ -16,10 +17,22 @@ namespace ConsoleUI
             // ProductManagerTestMethod();
             // CategoryTest();
             ProductManager productManager = new ProductManager(new EFProductDal());
-            foreach (var item in productManager.GetProductDetails())
+            var result = productManager.GetProductDetails();
+
+            if (result.Success)
             {
-                Console.WriteLine(item.CategoryName +" "+ item.ProductName +" "+item.UnitsInStock);
+                foreach (var item in result.Data)
+                {
+                    Console.WriteLine(item.CategoryName + " " + item.ProductName + " " + item.UnitsInStock);
+                }
             }
+            else
+            {
+                Console.WriteLine(result.Message);
+            }
+            //**ProductManagerda yazdığımız saat 23 ise hata fırlatsın mesajı çalışır tabi saat 23 ise :)
+
+
 
 
         }
@@ -37,7 +50,7 @@ namespace ConsoleUI
         {
             ProductManager productManager = new ProductManager(new EFProductDal()); //Bu şekildede Artık Entity Framework altyapısını kullnacağımızı belirriyoruz!!!***
 
-            foreach (var item in productManager.GetByUnitPrice(50, 100)) //Bize bellekteki listeden gelen isimleri ekrana yaz. Zamanla değişti..**
+            foreach (var item in productManager.GetByUnitPrice(50, 100).Data) //Bize bellekteki listeden gelen isimleri ekrana yaz. Zamanla değişti..**
             {
                 Console.WriteLine(item.ProductName);
             }

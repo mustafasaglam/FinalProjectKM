@@ -41,7 +41,7 @@ namespace Business.Concrete
             //İf kontrolleri
             //Diyelim ki şartları sağladı o zaman ürünleri listeliyor...
 
-            if (DateTime.Now.Hour==23)
+            if (DateTime.Now.Hour==00) // Saatleri 00 yaptım sonraki zamanalrda bize etki etmesin diye
             {
                 return new ErrorDataResult<List<Product>>(Messages.MaintenanceTime);
             }
@@ -69,7 +69,7 @@ namespace Business.Concrete
 
         public IDataResult<List<ProductDetailDto>> GetProductDetails()
         {
-            if (DateTime.Now.Hour == 23)
+            if (DateTime.Now.Hour == 00) // Saatleri 00 yaptım sonraki zamanalrda bize etki etmesin diye
             {
                 return new ErrorDataResult<List<ProductDetailDto>>(Messages.MaintenanceTime);
             }

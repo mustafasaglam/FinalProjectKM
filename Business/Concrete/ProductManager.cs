@@ -1,10 +1,14 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using Entities.DTOs;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,18 +26,51 @@ namespace Business.Concrete
             _productDal = productDal;
         }
 
+        [ValidationAspect(typeof(ProductValidator))] //artık validdation işleini bu attirubute yapacaktır
         public IResult Add(Product product)
         {
             //Buiness kodlar, yani kurallar var ise, veya çeşitli ksııtlamalar
-            if (product.ProductName.Length<2)
+            //Validation işlemleri, Doğrulamakodu? iş kodu? ayrımı nedir : İş kodunu ayrı, doğrulama kodunu ayrı yazmak gerekli !!
+
+            //Doğrulama eklenmek istenen nesnenin YAPISAL olarak kontrol etmektir.*** Örneğin;Sistme kayıt olurken minumum şu karakter olmalı, veya şifre şöyle olmalı gibi kurallar doğrulama - validasyon yapısıdır.
+
+            //İş kuralları şartlar sağlanıyormu diye kontrol eidldiğği yerdir. mesela sınavdan geçer not almış mı? Finansal puanı yeterlimi gibi kontroller iş kodudur.
+
+            /** //Bu kısmı artık fluent validasyon ile yazdık o yüzden kapattık.FLUENT i aktif etmek için
+            if (product.UnitPrice <= 0)
+             {
+                 return new ErrorResult("Fiyat 0dan küçük olamaz"); // Burda Messages dan da çağırabilirs bu ekildede verebilirz ama messages dan vermemiz doğru olanıdır
+             }
+
+             if (product.ProductName.Length < 2)
+             {
+                 //Magic string tir bu şekild ekullanmak. Bunu azaltmak için Business e gidip Constants (Sabit demektir.)Hata mesajları yapılarılanı burada sabitleyeceğiz
+                 return new ErrorResult(Messages.ProductNameInvalid);
+             }
+             */
+
+
+            //Fluent Validasyon kodlar
+            //Burada validasyonu aktif etme kısmı basit bir kodlama oldu. Bunu tüm projelerde kullanmak ve dinamik hale getirmek için Core içinde bir CrossCuttingConcerns klasörü oluşturulup buradan yönetilebilir. Yani bu aşağıdaki kodu Bir Tool haline getireyim. /* */ içindeki kodları buradan alıp Core içinde CrossCuttingConcerns içinde Validation içindeki ValidationTool clasına ekleyelim.
+
+            /* var context = new ValidationContext<Product>(product);  //using e ekle ValidationContext için //Product için doğrulama yapacağız diyoruz
+            ProductValidator productValidator = new ProductValidator(); //ProductValidator u kullnarak kuralları isteyeceğim
+            var result = productValidator.Validate(context); // sonra productValidator u Validate et
+            if (!result.IsValid)  //Eğer resutl validate olmaz ise hatayı fırlat
             {
-                //Magic string tir bu şekild ekullanmak. Bunu azaltmak için Business e gidip Constants (Sabit demektir.)Hata mesajları yapılarılanı burada sabitleyeceğiz
-                return new ErrorResult(Messages.ProductNameInvalid);
-            }
+                throw new ValidationException(result.Errors);
+            }*/
+
+            //ValidationTool.Validate(new ProductValidator(), product); //artık yukarıdaki işlemi Coreda evrensel hale getirdiğimiz için burada bu kod validasyon için bize yetecektir.
+            //*Artık attirubute ile vererek burada validaston satırınıda kaldırabilirz
+
+            //Business Kodlar
+
+            
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);
         }
-
+        
         public IDataResult<List<Product>> GetAll()
         {
             //Burada iş kodları var ise buraya yazılır

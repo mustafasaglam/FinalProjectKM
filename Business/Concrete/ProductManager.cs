@@ -1,8 +1,10 @@
 ﻿using Business.Abstract;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.InMemory;
@@ -11,6 +13,7 @@ using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -20,10 +23,16 @@ namespace Business.Concrete
     {
         IProductDal _productDal;  //Burada DataAcces projesindeki ProductDal global oalrak tanımlanır. VE üzerine gelip veya ampulden Generate Consructur denilerek yapıcı metodu oluşturulur.
 
+        //ICategoryDal _categoryDal; //bir entityManager kendisi hariç başka bir Dal ı enjekte edemez *** Nedeni: Ek iş kurallar geldiğinde sorun oluşacağı için bu yanlış yöntemdir.Ancak bunun yerine Service enjekte ederiz***
+        ICategoryService _categoryService;
+
         //Buna contructor injection denir
-        public ProductManager(IProductDal productDal)  //Generate Constructor ile otomatik oluşur.
+        public ProductManager(IProductDal productDal,ICategoryService categoryService)  //Generate Constructor ile otomatik oluşur.
         {
             _productDal = productDal;
+            //_categoryDal = categoryDal; //bir entityManager kendisi hariç başka bir Dal ı enjekte edemez *** Nedeni: Ek iş kurallar geldiğinde sorun oluşacağı için bu yanlış yöntemdir. Bunun yerine Service enjekte edilir
+            _categoryService = categoryService;
+
         }
 
         [ValidationAspect(typeof(ProductValidator))] //artık validdation işleini bu attirubute yapacaktır
@@ -65,12 +74,61 @@ namespace Business.Concrete
             //*Artık attirubute ile vererek burada validaston satırınıda kaldırabilirz
 
             //Business Kodlar
+            //Demo bir iş kuralı yapalım
+            //*******
+            //Bir kategoride 10'dan fazla ürün var ise eklenmesin iş kuralını yazalım. aşağıdaki şekilde yazabilirz.*** Ancak bu kuralı evrensel yapmaz isek bunu güncellemede veya başka bir metodda kullanmak istersek her defasında kendimizi tekrar etmek durumunda kalırız. DRY prensibi. Veya iş kuralı değişirse onu kullandığımız her metodda değiştirmemiz gerekecek. Dolayısıyla sürdürülebilir değil
+            //İş kurallarını bu şekilde yazar isek spagetti kod yazmış oluruz. 10 larca satır iş kuralı oldumu işler karmaşıklaşır. İlerleyen zamanlarda işler iyice karmaşıklaşır. TemizKod Clean kod yazmak için bujnu evrensel hale getirmek gerekir.
 
-            
+            /**var result = _productDal.GetAll(c => c.CategoryId == product.CategoryId).Count();
+            if (result>=10)
+            {
+                return new ErrorResult(Messages.ProductCountOfCategoryError);
+            }*/
+
+            //İş kuralımızı bir metod olarak tnaımlayıp aşağıdaki şekilde çağırıp kontrol ettiriyoruz
+
+            //Şimdi bir iş kuralı daha yazalım. Aynı isimde ürün eklenemez*** Örnek
+
+           //if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success) && deyip peşine 2.kuralıda yazabilirdik ama iş kurallarında bu şkilde nested iç içe if kullanmak daha doğrudr.
+           // {
+           //     if (CheckIFProductNameExists(product.ProductName).Success)
+           //     {
+           //         _productDal.Add(product);
+           //         return new SuccessResult(Messages.ProductAdded);
+           //     }
+           // }
+           // return new ErrorResult();
+           //Artık bu üsteki gibi iş kuralı vermemize gerek kalmadı. Çünkü Core içineki Utilities içinde BusinessRuless ile birlikte bir iş motoru yazdık. Ve iş kuralalrımızı dinamik olarak çekebileceğimiz bir yapı oluşturdulk
+           
+            //Yeni bir iş kuralı * Eğer mevcut kategori sayısı 15 i geçtiyse sisteme yeni ürün eklenemez**
+
+
+
+            IResult result=BusinessRules.Run(CheckIFProductNameExists(product.ProductName),CheckIfProductCountOfCategoryCorrect(product.CategoryId), CheckCategoryCountLimit());
+            if (result!=null)
+            {
+                return result; //kurallara uymaz ise result u döndürüyoruz uyuyor ise sorun yok ve devam eder
+            }
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);
+
+           
+            
         }
-        
+
+        [ValidationAspect(typeof(ProductValidator))]
+        public IResult Update(Product product)
+        {
+            //Bu kısmıda add metoduna göre yapılandırmak gerekir
+            if (CheckIfProductCountOfCategoryCorrect(product.CategoryId).Success)
+            {
+                _productDal.Update(product);
+                return new SuccessResult(Messages.ProductAdded);
+            }
+            return new ErrorResult();
+            
+        }
+
         public IDataResult<List<Product>> GetAll()
         {
             //Burada iş kodları var ise buraya yazılır
@@ -78,12 +136,12 @@ namespace Business.Concrete
             //İf kontrolleri
             //Diyelim ki şartları sağladı o zaman ürünleri listeliyor...
 
-            if (DateTime.Now.Hour==00) // Saatleri 00 yaptım sonraki zamanalrda bize etki etmesin diye
+            if (DateTime.Now.Hour == 00) // Saatleri 00 yaptım sonraki zamanalrda bize etki etmesin diye
             {
                 return new ErrorDataResult<List<Product>>(Messages.MaintenanceTime);
             }
 
-            return new SuccessDataResult<List<Product>>(_productDal.GetAll(),Messages.ProductListed); // Utilities entegrasyonlu son hali
+            return new SuccessDataResult<List<Product>>(_productDal.GetAll(), Messages.ProductListed); // Utilities entegrasyonlu son hali
         }
 
 
@@ -112,5 +170,44 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
+
+
+        //İş kuralımız. Kategorideki ürünsayısını doğrula metodumuz. Private veriyoruz çünkü sadece bu classda kullanacağız. İş kuralları pubklic oalrak tanımlanmamalıdır.
+        private IResult CheckIfProductCountOfCategoryCorrect(int categoryId) //Product product da geçilip ordan categoryid ye erişilir
+        {
+            var result = _productDal.GetAll(c => c.CategoryId == categoryId).Count();
+            if (result >= 10)
+            {
+                return new ErrorResult(Messages.ProductCountOfCategoryError);
+            }
+            return new SuccessResult();
+        }
+
+
+        //aynı isimde ürün eklenemez
+
+        private IResult CheckIFProductNameExists(string productName)
+        {
+            var result = _productDal.GetAll(p => p.ProductName == productName).Any(); //Any varmı demek !!*** any bool döndürür var ise tru dur. Any kullanmak yerine direk sorguyu çekip count a da bakabiliriz 0 dan farklıysa demkki vardır diyebilirz
+            if (result==true) //ile if(result)  aynı şeydir !result true değilse demktir
+            {
+                return new ErrorResult(Messages.CheckIFProductNameExists);
+            }
+            return new SuccessResult();
+        }
+
+        //Eğer category sayısı 15 i geçerse yeni ürün eklenemez kuralı
+        private IResult CheckCategoryCountLimit()
+        {
+            var result = _categoryService.GetAll().Data.Count(); //CategoryService yazdık cünkü ona ulaştık yukarıda.
+            if (result>15)
+            {
+                return new ErrorResult(Messages.CheckCategoryCountLimit);
+            }
+            return new SuccessResult();
+        }
+
+
+        
     }
 }

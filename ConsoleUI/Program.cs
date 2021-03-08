@@ -16,7 +16,7 @@ namespace ConsoleUI
 
             // ProductManagerTestMethod();
             // CategoryTest();
-            ProductManager productManager = new ProductManager(new EFProductDal());
+            ProductManager productManager = new ProductManager(new EFProductDal(),new CategoryManager(new EfCategoryDal()));
             var result = productManager.GetProductDetails();
 
             if (result.Success)
@@ -40,7 +40,7 @@ namespace ConsoleUI
         private static void CategoryTest()
         {
             CategoryManager categoryManager = new CategoryManager(new EfCategoryDal());
-            foreach (var item in categoryManager.GetAll())
+            foreach (var item in categoryManager.GetAll().Data)
             {
                 Console.WriteLine(item.CategoryName);
             }
@@ -48,7 +48,7 @@ namespace ConsoleUI
 
         private static void ProductManagerTestMethod()
         {
-            ProductManager productManager = new ProductManager(new EFProductDal()); //Bu şekildede Artık Entity Framework altyapısını kullnacağımızı belirriyoruz!!!***
+            ProductManager productManager = new ProductManager(new EFProductDal(), new CategoryManager(new EfCategoryDal())); //Bu şekildede Artık Entity Framework altyapısını kullnacağımızı belirriyoruz!!!***
 
             foreach (var item in productManager.GetByUnitPrice(50, 100).Data) //Bize bellekteki listeden gelen isimleri ekrana yaz. Zamanla değişti..**
             {

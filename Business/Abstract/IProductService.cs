@@ -26,6 +26,7 @@ namespace Business.Abstract
         // void Add(Product product); //Burada sadece ekleme, geriye bişey döndürmüyor.
         //Yukarıdaki eski hali alttaki yeni hali
         IResult Add(Product product); //Utlities den türeyen
+        IResult Update(Product product);
 
     }
 }

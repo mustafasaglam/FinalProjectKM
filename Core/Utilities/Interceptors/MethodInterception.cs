@@ -7,6 +7,8 @@ namespace Core.Utilities.Interceptors
     {
         //Bu class try catc yapısını tek bir yerden kontrol etmek için AOP yapısının temelini oluşturur
 
+        //invocaton iş tarafındaki metodumuzu kadteder, add update delte get getall
+
         protected virtual void OnBefore(IInvocation invocation) { }
         protected virtual void OnAfter(IInvocation invocation) { }
         protected virtual void OnException(IInvocation invocation, System.Exception e) { }

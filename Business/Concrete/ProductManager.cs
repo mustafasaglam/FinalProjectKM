@@ -35,6 +35,13 @@ namespace Business.Concrete
 
         }
 
+        //Claim - Yetkilendirme
+        //Api bazlı yapılarda JWT - Json web token yapıları kullanılıyor
+        //Öncelikle Tablolarımızı oluşturcağız
+        //Users, OperationClaims, UserOperationClaims tablolarını veritabanına oluşturuyoruz. Bu tabloların Entity lerini entities kamanına değilde Evrensel olan Core katmanımızdaki Entites klasörü altına oluşturuyoruz. Çünkü bu Yetkilendirme sistemini evrensle olarakmkuruyoruz ve her projemizde kullanabiliriz. Ama tabiki projeye özgü olarak entities altına da oalbilir.
+        
+       // [SecuredOperation("product.add")]  // artık yetki işlemlerimizi bu şekilde attiriburelerle sağlayacağız
+
         [ValidationAspect(typeof(ProductValidator))] //artık validdation işleini bu attirubute yapacaktır
         public IResult Add(Product product)
         {

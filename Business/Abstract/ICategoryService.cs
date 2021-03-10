@@ -10,6 +10,6 @@ namespace Business.Abstract
     public interface ICategoryService
     {
         IDataResult<List<Category>> GetAll(); // hepsini getir
-        IDataResult<List<Category>> GetById(int categoryId);//id ye göre 1 tane getir
+        IDataResult<List<Category>> GetById(int categoryId);//id ye göre liste getir
     }
 }
